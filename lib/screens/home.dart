@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
       print("OPSI 1");
       notes.sort((a, b) => a.modifiedTime.compareTo(b.modifiedTime));
     } else {
-      print("OPSI 2");
+      print("OPSI 2" + sorted.toString());
       notes.sort((b, a) => a.modifiedTime.compareTo(b.modifiedTime));
     }
 
@@ -46,8 +46,8 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       filteredNotes = sampleNotes
           .where((note) =>
-              note.content.toLowerCase().contains(searchText.toLowerCase()) ||
-              note.title.toLowerCase().contains(searchText.toLowerCase()))
+              note.title.toLowerCase().contains(searchText.toLowerCase()) ||
+              note.content.toLowerCase().contains(searchText.toLowerCase()))
           .toList();
     });
   }
@@ -80,6 +80,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   onPressed: () {
                     setState(() {
                       filteredNotes = sortNotesByModifiedTime(filteredNotes);
+                      if (sorted == false) {
+                        sorted = true;
+                      } else {
+                        sorted = false;
+                      }
                     });
                   },
                   icon: Container(
@@ -139,15 +144,35 @@ class _HomeScreenState extends State<HomeScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  const EditScreen(),
+                                  EditScreen(note: filteredNotes[index]),
                             ),
                           );
+
+                          if (result != null) {
+                            setState(() {
+                              int originalIndex =
+                                  sampleNotes.indexOf(filteredNotes[index]);
+                              sampleNotes[originalIndex] = Note(
+                                id: sampleNotes[originalIndex].id,
+                                title: result[0],
+                                content: result[1],
+                                modifiedTime: DateTime.now(),
+                              );
+
+                              filteredNotes[index] = Note(
+                                id: filteredNotes[index].id,
+                                title: result[0],
+                                content: result[1],
+                                modifiedTime: DateTime.now(),
+                              );
+                            });
+                          }
                         },
                         title: RichText(
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                           text: TextSpan(
-                            text: '${sampleNotes[index].title} \n',
+                            text: '${filteredNotes[index].title} \n',
                             style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
@@ -156,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             children: [
                               TextSpan(
-                                text: '${sampleNotes[index].content}',
+                                text: '${filteredNotes[index].content}',
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.normal,

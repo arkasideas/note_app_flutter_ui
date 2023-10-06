@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:note_app_flutter_ui/models/note.dart';
 
 class EditScreen extends StatefulWidget {
-  const EditScreen({super.key});
+  final Note? note;
+  const EditScreen({super.key, this.note});
 
   @override
   State<EditScreen> createState() => _EditScreenState();
@@ -10,6 +12,17 @@ class EditScreen extends StatefulWidget {
 class _EditScreenState extends State<EditScreen> {
   TextEditingController _titleController = TextEditingController();
   TextEditingController _contentController = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    if (widget.note != null) {
+      _titleController = TextEditingController(text: widget.note!.title);
+      _contentController = TextEditingController(text: widget.note!.content);
+    }
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +48,7 @@ class _EditScreenState extends State<EditScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(
-                      Icons.arrow_back_ios,
+                      Icons.arrow_back_ios_new,
                       color: Colors.white,
                     ),
                   ),
@@ -65,6 +78,7 @@ class _EditScreenState extends State<EditScreen> {
                     style: TextStyle(
                       color: Colors.grey,
                     ),
+                    maxLines: null,
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Type something here',
@@ -81,7 +95,8 @@ class _EditScreenState extends State<EditScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pop(context,[_titleController.text, _contentController.text]);
+          Navigator.pop(
+              context, [_titleController.text, _contentController.text]);
         },
         elevation: 10,
         backgroundColor: Colors.grey.shade800,
